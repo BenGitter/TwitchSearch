@@ -1,0 +1,16 @@
+body{
+  background-color: #eee;
+}
+
+#title-bar{
+  height: 80px;
+  background-color: rgb(245,230,245);
+}
+#title-bar img{
+  margin-top: 10px;
+  height: 70px;
+}
+#title-bar h1{
+  font-family: 'Roboto', sans-serif;
+  font-weight: 900;
+}
