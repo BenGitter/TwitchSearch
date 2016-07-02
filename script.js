@@ -27,3 +27,10 @@ function makeRequest(name, i){
 //$.getJSON('https://api.twitch.tv/kraken/search/channels?q=' + encodeURIComponent(search) + '&limit=5&callback=?', function(data){
 //  console.log(data);
 //});
+
+function resizing(){
+  $("#iconBar input").width($("#iconBar").width()-$("#iconBar .btn-group").width()-30);
+}
+
+resizing();
+$(window).on("resize", resizing);
