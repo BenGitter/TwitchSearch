@@ -28,18 +28,19 @@
       <div id="iconBar" class="col-xs-10 col-xs-offset-1">
         <input type="search" placeholder="Search channel..." />
         <div class="btn-group" role="group">
-          <button type="button" class="btn btn-secondary">All</button>
-          <button type="button" class="btn btn-secondary">Online</button>
-          <button type="button" class="btn btn-secondary">Offline</button>
+          <button type="button" data-sort="all" class="btn btn-secondary">All</button>
+          <button type="button" data-sort="online" class="btn btn-secondary">Online</button>
+          <button type="button" data-sort="offline" class="btn btn-secondary">Offline</button>
         </div>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-xs-10 col-xs-offset-1 item">
-        <div class="col-xs-3"><img src=""</div>
-        <div class="col-xs-9"></div>
-      </div>
+    <div class="row items" id="onlineItems">
+      <div class="col-xs-10 col-xs-offset-1 listHeader"><h5>Online</h5></div>
+    </div>
+
+    <div class="row items" id="offlineItems">
+      <div class="col-xs-10 col-xs-offset-1 listHeader"><h5>Offline</h5></div>
     </div>
 
   </div>
