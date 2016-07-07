@@ -44,8 +44,25 @@ body{
 .items .item .col-xs-3 img{
   height: 60px;
 }
+.item h3{
+  margin-top: 0px;
+}
+.item h6{
+  color: rgba(0,0,0,0.7);
+}
+
 
 .listHeader{
   background-color: rgba(255,105,180,0.17);
   padding: 0;
+}
+
+#searchItems{
+  display: none;
+}
+#searchItems .item.online h6 span{
+  color: green;
+}
+#searchItems .item.offline h6 span{
+  color: red;
 }
