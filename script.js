@@ -5,6 +5,9 @@ names = names.sort(function(a,b){
   return a.toLowerCase().localeCompare(b.toLowerCase());
 });
 
+//Empty search input
+$("#iconBar input[type='search']").val("");
+
 var objects = [];
 var imgs = [];
 for(var i = 0; i < names.length; i++){
@@ -58,7 +61,7 @@ function makeRequest(name, search){
       var id;
       if(search){
         id = "#search" + name.toLowerCase();
-        getLogoOffline(name, id, true)
+        getLogoOffline(name, id, true);
       }else{
         id = "#" + name.toLowerCase();
         getLogoOffline(name, id, false);
@@ -94,6 +97,9 @@ $(window).on("resize", resizing);
 // Event handlers sort buttons
 oldState = "all";
 $(".btn-group .btn").on('click', function(){
+    if(oldState = "none"){
+      return false;
+    }
     var newState = $(this).data("sort");
     if(newState !== oldState){
       if(oldState === "all"){
@@ -137,7 +143,7 @@ $("#iconBar input[type='search']").on('input', function(){
     return false;
   }
 
-  $("#searchItems").html('<div class="col-xs-10 col-xs-offset-1 listHeader"><h5>Search results</h5></div>');
+  $("#searchItems").html('<div class="col-xs-10 col-xs-offset-1 listHeader"><h5>Search results</h5><span id="close-results">Close results</span></div>');
   $.xhrPool.abortAll();
   newState = "none";
   if(oldState !== "none"){
@@ -145,11 +151,23 @@ $("#iconBar input[type='search']").on('input', function(){
     $("#searchItems").slideDown(400);
   }
 
+  // Close results
+  $("#close-results").on('click', function(){
+    $(".non-search").slideDown(400);
+    $("#searchItems").slideUp(400);
+    oldState = "all";
+    $("#iconBar input[type='search']").val("");
+    $.xhrPool.abortAll();
+  });
+
   $.getJSON('https://api.twitch.tv/kraken/search/channels?q=' + encodeURIComponent(searchVal) + '&limit=5&callback=?', function(data){
     $(data.channels).each(function(i, item){
       makeRequest(item.display_name, true);
-
     });
+    if(data.channels.length === 0){
+      var innerHTML = '<div id="no-results" class="col-xs-10 col-xs-offset-1 item"><h3>No results</h3></div>';
+      $("#searchItems").append(innerHTML);
+    }
   });
 });
 

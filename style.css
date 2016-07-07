@@ -66,3 +66,18 @@ body{
 #searchItems .item.offline h6 span{
   color: red;
 }
+
+#no-results h3{
+  margin-top: 20px;
+}
+
+#searchItems .listHeader h5{
+  float: left;
+}
+#searchItems .listHeader span{
+  float: right;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 5px;
+  text-decoration: underline;
+}
