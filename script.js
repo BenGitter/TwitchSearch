@@ -1,7 +1,33 @@
 /* Check if channel in list is online/offline/removed */
 // Get list of names and sort them
-var names = ["H1Z1JustSurvive", "ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "brunofin", "noobs2ninjas"];
-names = names.sort(function(a,b){
+function storageAvailable(type){
+  try{
+    var storage = window[type],
+      x = '__storage_test__';
+    storage.setItem(x,x);
+    storage.removeItem(x);
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+var standardList = ["H1Z1JustSurvive", "ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "brunofin", "noobs2ninjas"];
+var channelList = [];
+
+if(storageAvailable('localStorage')){
+  if(!localStorage.getItem('channelList')){
+    localStorage.setItem('channelList', JSON.stringify(standardList));
+    channelList = standardList;
+  }else{
+    channelList = JSON.parse(localStorage.getItem('channelList'));
+  }
+}else{
+  console.log("localStorage not available");
+  channelList = standardList;
+}
+
+channelList = channelList.sort(function(a,b){
   return a.toLowerCase().localeCompare(b.toLowerCase());
 });
 
@@ -10,8 +36,8 @@ $("#iconBar input[type='search']").val("");
 
 var objects = [];
 var imgs = [];
-for(var i = 0; i < names.length; i++){
-  makeRequest(names[i], false);
+for(var i = 0; i < channelList.length; i++){
+  makeRequest(channelList[i], false);
 }
 
 
@@ -97,7 +123,7 @@ $(window).on("resize", resizing);
 // Event handlers sort buttons
 oldState = "all";
 $(".btn-group .btn").on('click', function(){
-    if(oldState = "none"){
+    if(oldState === "none"){
       return false;
     }
     var newState = $(this).data("sort");
