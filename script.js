@@ -62,10 +62,10 @@ function makeRequest(name, search){
       itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
       itemHTML += '<h3>' + data.stream.channel.display_name + '</h3>';
       if(search){
-        itemHTML += '<h6><span>ONLINE</span> - ' + data.stream.game + '</h6></div></div>';
+        itemHTML += '<h6><span>ONLINE</span> - ' + data.stream.game + '</h6>/span></div></div>';
         $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
       }else{
-        itemHTML += '<h6>' + data.stream.game + '</h6></div></div>';
+        itemHTML += '<h6>' + data.stream.game + '</h6><span class="remove-item glyphicon glyphicon-remove"></span></div></div>';
         $($(itemHTML).fadeIn(400)).appendTo("#onlineItems");
       }
     }else{
@@ -77,7 +77,7 @@ function makeRequest(name, search){
       }
       itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
       itemHTML += '<h3>' + name + '</h3>';
-      itemHTML += '<h6></h6></div></div>';
+      itemHTML += '<h6></h6><span class="remove-item glyphicon glyphicon-remove"></span></div></div>';
       if(search){
         $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
       }else{
@@ -94,24 +94,52 @@ function makeRequest(name, search){
       }
     }
 
+    // Remove button event handler
+    $(".remove-item").on('click', function(){
+      console.log($(this).parent().find("h3").html());
+      removeItemFromList($(this).parent().find("h3").html());
+      var height = $(this).parent().parent().innerHeight() + "px";
+      $(this).parent().parent().fadeOut(400, function(){
+        $(this).prev().css("margin-bottom", height);
+        $(this).prev().animate({
+          "margin-bottom": "2px"
+        }, 300);
+        $(this).remove();
+      });
+    });
+
   });
 }
-
-
 
 function getLogoOffline(channel, id, search){
   $.getJSON('https://api.twitch.tv/kraken/channels/' + channel, function(data){
     var $id = $(id);
     $id.find(".img-responsive").attr('src', data.logo);
+    var status = (data.status === null) ? "No status set" : data.status;
     if(search){
-      $id.find("h6").html("<span>OFFLINE</span> - " + data.status);
+      $id.find("h6").html("<span>OFFLINE</span> - " + status);
     }else{
-      $id.find("h6").html(data.status);
+      $id.find("h6").html(status);
     }
 
     $id.find("h3").html(data.display_name);
   });
 }
+
+function removeItemFromList(channel){
+  var name = channel.toLowerCase();
+  var newList = [];
+  for(var i = 0; i < channelList.length; i++){
+    if(channelList[i].toLowerCase() === name){
+      newList = channelList.slice(0,i-1).concat(channelList.slice(i+1, channelList.length));
+      localStorage.setItem('channelList', JSON.stringify(newList));
+      channelList = newList;
+      break;
+    }
+  }
+
+}
+
 
 function resizing(){
   $("#iconBar input").width($("#iconBar").width()-$("#iconBar .btn-group").width()-30);
