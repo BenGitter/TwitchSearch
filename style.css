@@ -83,7 +83,7 @@ body{
   text-decoration: underline;
 }
 
-.remove-item{
+.remove-item, .remove-item-search{
   float: right;
   margin-top: -40px;
   font-size: 20px;
@@ -91,6 +91,6 @@ body{
   cursor: pointer;
   margin-right: -15px;
 }
-.remove-item:hover{
+.remove-item:hover, .remove-item-search:hover{
   color: rgba(255,40,140,0.9);
 }

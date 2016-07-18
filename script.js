@@ -1,5 +1,31 @@
+//TO DO
+/*
+- Remove item after it has been removed from list by search
+
+*/
+
 /* Check if channel in list is online/offline/removed */
 // Get list of names and sort them
+function d(o){
+  console.log(o);
+}
+
+d("JS started!");
+
+function inArray(name, arr){
+  for(var i = 0; i < arr.length; i++){
+    if(name.toLowerCase() === arr[i].toLowerCase()){
+      return true;
+    }
+  }
+  return false;
+}
+
+function cl(){
+  localStorage.removeItem("channelList");
+  document.location.reload(true);
+}
+
 function storageAvailable(type){
   try{
     var storage = window[type],
@@ -62,10 +88,14 @@ function makeRequest(name, search){
       itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
       itemHTML += '<h3>' + data.stream.channel.display_name + '</h3>';
       if(search){
-        itemHTML += '<h6><span>ONLINE</span> - ' + data.stream.game + '</h6>/span></div></div>';
+        if(inArray(name, channelList)){
+          itemHTML += '<h6><span>ONLINE</span> - ' + data.stream.game + '</h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>';
+        }else{
+          itemHTML += '<h6><span>ONLINE</span> - ' + data.stream.game + '</h6></div></div>';
+        }
         $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
       }else{
-        itemHTML += '<h6>' + data.stream.game + '</h6><span class="remove-item glyphicon glyphicon-remove"></span></div></div>';
+        itemHTML += '<h6>' + data.stream.game + '</h6><span title="Remove channel from your list" class="remove-item glyphicon glyphicon-remove"></span></div></div>';
         $($(itemHTML).fadeIn(400)).appendTo("#onlineItems");
       }
     }else{
@@ -77,10 +107,12 @@ function makeRequest(name, search){
       }
       itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
       itemHTML += '<h3>' + name + '</h3>';
-      itemHTML += '<h6></h6><span class="remove-item glyphicon glyphicon-remove"></span></div></div>';
+
       if(search){
+        itemHTML += (inArray(name, channelList)) ? '<h6></h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>' : '<h6></h6></div></div>';
         $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
       }else{
+        itemHTML += '<h6></h6><span title="Remove channel from your list" class="remove-item glyphicon glyphicon-remove"></span></div></div>';
         $($(itemHTML).fadeIn(400)).appendTo("#offlineItems");
       }
 
@@ -96,7 +128,6 @@ function makeRequest(name, search){
 
     // Remove button event handler
     $(".remove-item").on('click', function(){
-      console.log($(this).parent().find("h3").html());
       removeItemFromList($(this).parent().find("h3").html());
       var height = $(this).parent().parent().innerHeight() + "px";
       $(this).parent().parent().fadeOut(400, function(){
@@ -106,6 +137,16 @@ function makeRequest(name, search){
         }, 300);
         $(this).remove();
       });
+
+    });
+
+    //Remove button search event handlers
+    $(".remove-item-search").on('click', function(){
+      $(this).fadeOut(300);
+      var name = $(this).parent().find("h3").html().toLowerCase();
+      var id = "#" + name;
+      $(id).remove();
+      removeItemFromList(name);
     });
 
   });
@@ -131,7 +172,7 @@ function removeItemFromList(channel){
   var newList = [];
   for(var i = 0; i < channelList.length; i++){
     if(channelList[i].toLowerCase() === name){
-      newList = channelList.slice(0,i-1).concat(channelList.slice(i+1, channelList.length));
+      newList = channelList.slice(0,i).concat(channelList.slice(i+1, channelList.length));
       localStorage.setItem('channelList', JSON.stringify(newList));
       channelList = newList;
       break;
@@ -203,6 +244,7 @@ $("#iconBar input[type='search']").on('input', function(){
   if(oldState !== "none"){
     $(".non-search").slideUp(400);
     $("#searchItems").slideDown(400);
+    $("#iconBar .btn-group .btn").attr("disabled", "true");
   }
 
   // Close results
@@ -211,6 +253,7 @@ $("#iconBar input[type='search']").on('input', function(){
     $("#searchItems").slideUp(400);
     oldState = "all";
     $("#iconBar input[type='search']").val("");
+    $("#iconBar .btn-group .btn").removeAttr("disabled");
     $.xhrPool.abortAll();
   });
 
