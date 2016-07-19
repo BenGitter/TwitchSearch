@@ -26,14 +26,6 @@ function cl(){
   document.location.reload(true);
 }
 
-//Refresh page
-setInterval(function(){
-  if(oldState !== "none"){
-    window.location.reload();
-  }
-}, 30000)
-
-
 function storageAvailable(type){
   try{
     var storage = window[type],
@@ -90,9 +82,9 @@ function makeRequest(name, search){
       imgs.push(data.stream.channel.logo);
       imgURL = data.stream.channel.logo;
       if(search){
-        itemHTML = '<div id="search' + name.toLowerCase() + '" class="col-xs-10 col-xs-offset-1 item online"><div class="col-xs-3">';
+        itemHTML = '<div id="search' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item online"><div class="col-xs-3">';
       }else{
-        itemHTML = '<div id="' + name.toLowerCase() + '" class="col-xs-10 col-xs-offset-1 item online"><div class="col-xs-3">';
+        itemHTML = '<div id="' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item online"><div class="col-xs-3">';
       }
       itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
       itemHTML += '<h3>' + data.stream.channel.display_name + '</h3>';
@@ -111,9 +103,9 @@ function makeRequest(name, search){
     }else{
       status = "offline";
       if(search){
-        itemHTML = '<div id="search' + name.toLowerCase() + '" class="col-xs-10 col-xs-offset-1 item offline"><div class="col-xs-3">';
+        itemHTML = '<div id="search' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item offline"><div class="col-xs-3">';
       }else{
-        itemHTML = '<div id="' + name.toLowerCase() + '" class="col-xs-10 col-xs-offset-1 item offline"><div class="col-xs-3">';
+        itemHTML = '<div id="' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item offline"><div class="col-xs-3">';
       }
       itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
       itemHTML += '<h3>' + name + '</h3>';
@@ -236,6 +228,9 @@ $(window).on("resize", resizing);
 
 // Event handlers sort buttons
 oldState = "all";
+newState = "all";
+$("#iconBar .btn-group .btn").removeAttr("disabled");
+
 $(".btn-group .btn").on('click', function(){
     if(oldState === "none"){
       return false;
@@ -284,7 +279,7 @@ $("#iconBar input[type='search']").on('input', function(){
     return false;
   }
 
-  $("#searchItems").html('<div class="col-xs-10 col-xs-offset-1 listHeader"><h5>Search results</h5><span id="close-results">Close results</span></div>');
+  $("#searchItems").html('<div class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 listHeader"><h5>Search results</h5><span id="close-results">Close results</span></div>');
   $.xhrPool.abortAll();
   newState = "none";
   if(oldState !== "none"){
@@ -334,3 +329,12 @@ $.ajaxSetup({
         }
     }
 });
+
+//Refresh page
+setInterval(function(){
+  if(newState !== "none"){
+    window.location.reload();
+  }else{
+    return false;
+  }
+}, 30000);
