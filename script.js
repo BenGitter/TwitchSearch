@@ -89,15 +89,16 @@ function makeRequest(name, search){
       itemHTML += '<h3>' + data.stream.channel.display_name + '</h3>';
       if(search){
         if(inArray(name, channelList)){
-          itemHTML += '<h6><span>ONLINE</span> - ' + data.stream.game + '</h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>';
+          itemHTML += '<h6><span>ONLINE</span> - <b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>';
         }else{
-          itemHTML += '<h6><span>ONLINE</span> - ' + data.stream.game + '</h6></div></div>';
+          itemHTML += '<h6><span>ONLINE</span> - <b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6></div></div>';
         }
         $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
       }else{
-        itemHTML += '<h6>' + data.stream.game + '</h6><span title="Remove channel from your list" class="remove-item glyphicon glyphicon-remove"></span></div></div>';
+        itemHTML += '<h6><b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Remove channel from your list" class="remove-item glyphicon glyphicon-remove"></span></div></div>';
         $($(itemHTML).fadeIn(400)).appendTo("#onlineItems");
       }
+      d(data);
     }else{
       status = "offline";
       if(search){
@@ -178,7 +179,13 @@ function removeItemFromList(channel){
       break;
     }
   }
+}
 
+function addItemtoList(channel){
+  channelList.push(channel.toLowerCase());
+  channelList = channelList.sort(function(a,b){
+    return a.toLowerCase().localeCompare(b.toLowerCase());
+  });
 }
 
 
