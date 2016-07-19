@@ -26,6 +26,14 @@ function cl(){
   document.location.reload(true);
 }
 
+//Refresh page
+setInterval(function(){
+  if(oldState !== "none"){
+    window.location.reload();
+  }
+}, 30000)
+
+
 function storageAvailable(type){
   try{
     var storage = window[type],
@@ -38,7 +46,7 @@ function storageAvailable(type){
   }
 }
 
-var standardList = ["H1Z1JustSurvive", "ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "brunofin", "noobs2ninjas"];
+var standardList = ["H1Z1JustSurvive", "ESL_SC2", "OgamingSC2", "cretetion", "freecodecamp", "storbeck", "habathcx", "RobotCaleb", "noobs2ninjas"];
 var channelList = [];
 
 if(storageAvailable('localStorage')){
@@ -76,6 +84,7 @@ function makeRequest(name, search){
 
     if("error" in data){
       status = "error";
+      window.alert("Your list contains an account (" + name + ") that is closed or never existed!");
     }else if(data.stream !== null){
       status = "online";
       imgs.push(data.stream.channel.logo);
@@ -128,7 +137,11 @@ function makeRequest(name, search){
     }
 
     // Remove button event handler
-    $(".remove-item").on('click', function(){
+    $(".remove-item").unbind().on('click', function(){
+      if($(this).parent().find("h3").html() == "FreeCodeCamp"){
+        window.alert("FreeCodeCamp cannot be removed.");
+        return false;
+      }
       removeItemFromList($(this).parent().find("h3").html());
       var height = $(this).parent().parent().innerHeight() + "px";
       $(this).parent().parent().fadeOut(400, function(){
@@ -141,7 +154,11 @@ function makeRequest(name, search){
     });
 
     //Remove button search event handler
-    $(".remove-item-search").on('click', function(){
+    $(".remove-item-search").unbind().on('click', function(){
+      if($(this).parent().find("h3").html() == "FreeCodeCamp"){
+        window.alert("FreeCodeCamp cannot be removed.");
+        return false;
+      }
       $(this).removeClass("glyphicon-remove remove-item");
       $(this).addClass("glyphicon-plus add-item");
       var name = $(this).parent().find("h3").html().toLowerCase();
@@ -263,6 +280,7 @@ $("#iconBar input[type='search']").on('input', function(){
     oldState = "all";
     $(".non-search").slideDown(400);
     $("#searchItems").slideUp(400);
+    $("#iconBar .btn-group .btn").removeAttr("disabled");
     return false;
   }
 
