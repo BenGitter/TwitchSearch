@@ -331,10 +331,10 @@ $.ajaxSetup({
 });
 
 //Refresh page
-setInterval(function(){
-  if(newState !== "none"){
-    window.location.reload();
-  }else{
-    return false;
-  }
-}, 30000);
+// setInterval(function(){
+//   if(newState !== "none"){
+//     window.location.reload();
+//   }else{
+//     return false;
+//   }
+// }, 30000);
