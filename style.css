@@ -18,21 +18,27 @@ body{
 #iconBar button{
   background-color: rgba(255,255,255,0.4);
   outline: none;
+  transition: background-color 0.2s;
+}
+#iconBar button:hover{
+  background-color: rgba(255,255,255,0.7);
 }
 #iconBar .btn-group{
   float: right;
 }
 #iconBar input[type="search"]{
   width: 100%;
-  margin-top: 5px;
-  border: 0;
+  margin-top: 1px;
   padding: 2px;
   padding-left: 10px;
   outline: none;
-  border: 1px solid rgba(0,0,0,0);
+  border: 0;
+  border-top: 4px solid rgba(0,0,0,0);
+  border-bottom: 4px solid rgba(0,0,0,0);
+  transition: border-bottom 0.4s;
 }
 #iconBar input[type="search"]:focus{
-  border: 1px solid rgba(255,105,180,0.2);
+  border-bottom: 4px solid rgba(255,105,180,0.3);
 }
 
 .items .item{
@@ -44,9 +50,11 @@ body{
 }
 .items .item .col-xs-3 img{
   height: 60px;
+  cursor: pointer;
 }
 .item h3{
   margin-top: 0px;
+  cursor: pointer;
 }
 .item h6{
   color: rgba(0,0,0,0.7);
@@ -83,7 +91,7 @@ body{
   text-decoration: underline;
 }
 
-.remove-item, .remove-item-search{
+.remove-item, .remove-item-search, .add-item{
   float: right;
   margin-top: -40px;
   font-size: 20px;
@@ -93,4 +101,7 @@ body{
 }
 .remove-item:hover, .remove-item-search:hover{
   color: rgba(255,40,140,0.9);
+}
+.add-item:hover{
+  color: rgba(80,80,255,0.9);
 }

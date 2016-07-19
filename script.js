@@ -1,6 +1,6 @@
 //TO DO
 /*
-- Remove item after it has been removed from list by search
+- Alphabetical order items (also after item has been added)
 
 */
 
@@ -91,7 +91,7 @@ function makeRequest(name, search){
         if(inArray(name, channelList)){
           itemHTML += '<h6><span>ONLINE</span> - <b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>';
         }else{
-          itemHTML += '<h6><span>ONLINE</span> - <b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6></div></div>';
+          itemHTML += '<h6><span>ONLINE</span> - <b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Add channel to your list" class="add-item glyphicon glyphicon-plus"></span></div></div>';
         }
         $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
       }else{
@@ -110,7 +110,7 @@ function makeRequest(name, search){
       itemHTML += '<h3>' + name + '</h3>';
 
       if(search){
-        itemHTML += (inArray(name, channelList)) ? '<h6></h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>' : '<h6></h6></div></div>';
+        itemHTML += (inArray(name, channelList)) ? '<h6></h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>' : '<h6></h6><span title="Add channel to your list" class="add-item glyphicon glyphicon-plus"></span></div></div>';
         $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
       }else{
         itemHTML += '<h6></h6><span title="Remove channel from your list" class="remove-item glyphicon glyphicon-remove"></span></div></div>';
@@ -138,16 +138,32 @@ function makeRequest(name, search){
         }, 300);
         $(this).remove();
       });
-
     });
 
-    //Remove button search event handlers
+    //Remove button search event handler
     $(".remove-item-search").on('click', function(){
-      $(this).fadeOut(300);
+      $(this).removeClass("glyphicon-remove remove-item");
+      $(this).addClass("glyphicon-plus add-item");
       var name = $(this).parent().find("h3").html().toLowerCase();
       var id = "#" + name;
       $(id).remove();
       removeItemFromList(name);
+    });
+
+    // Add button event handler
+    $(".add-item").on('click', function(){
+      var name = $(this).parent().find("h3").html();
+      addItemtoList($(this).parent().find("h3").html());
+      $(this).addClass("glyphicon-remove remove-item");
+      $(this).removeClass("glyphicon-plus add-item");
+    });
+
+    //Link to Twitch site
+    $(".item h3").on('click', function(){
+      window.location = "https://twitch.tv/" + $(this).parent().parent().attr("id");
+    });
+    $(".item img").on('click', function(){
+      window.location = "https://twitch.tv/" + $(this).parent().parent().attr("id");
     });
 
   });
@@ -182,10 +198,15 @@ function removeItemFromList(channel){
 }
 
 function addItemtoList(channel){
+  if(inArray(channel, channelList)){
+    return false;
+  }
   channelList.push(channel.toLowerCase());
   channelList = channelList.sort(function(a,b){
     return a.toLowerCase().localeCompare(b.toLowerCase());
   });
+  localStorage.setItem('channelList', JSON.stringify(channelList));
+  makeRequest(channel, false);
 }
 
 
@@ -269,12 +290,11 @@ $("#iconBar input[type='search']").on('input', function(){
       makeRequest(item.display_name, true);
     });
     if(data.channels.length === 0){
-      var innerHTML = '<div id="no-results" class="col-xs-10 col-xs-offset-1 item"><h3>No results</h3></div>';
+      var innerHTML = '<div id="no-results" class="col-xs-10 col-xs-offset-1 item"><h3>No results</h3><h6>Account <b>' + searchVal + '</b> does not exist.</h6></div>';
       $("#searchItems").append(innerHTML);
     }
   });
 });
-
 
 // Code for aborting all current AJAX request: http://tjrus.com/blog/stop-all-active-ajax-requests
 $.xhrPool = []; // array of uncompleted requests
