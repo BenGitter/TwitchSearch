@@ -168,11 +168,11 @@ function makeRequest(name, search){
     });
 
     //Link to Twitch site
-    $(".item h3").on('click', function(){
-      window.location = "https://twitch.tv/" + $(this).parent().parent().attr("id");
+    $(".item h3").unbind().on('click', function(){
+      window.open("https://twitch.tv/" + $(this).parent().parent().attr("id"));
     });
-    $(".item img").on('click', function(){
-      window.location = "https://twitch.tv/" + $(this).parent().parent().attr("id");
+    $(".item img").unbind().on('click', function(){
+      window.open("https://twitch.tv/" + $(this).parent().parent().attr("id"));
     });
 
   });
