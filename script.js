@@ -66,120 +66,140 @@ for(var i = 0; i < channelList.length; i++){
   makeRequest(channelList[i], false);
 }
 
-
-function makeRequest(name, search){
-  $.getJSON('https://api.twitch.tv/kraken/streams/' + name + '?callback=?', function(data) {
-    var status = "";
-    var imgURL = "http://placehold.it/100x100";
-    var itemHTML = "";
-    objects.push(data);
-
-    if("error" in data){
-      status = "error";
-      window.alert("Your list contains an account (" + name + ") that is closed or never existed!");
-    }else if(data.stream !== null){
-      status = "online";
-      imgs.push(data.stream.channel.logo);
-      imgURL = data.stream.channel.logo;
-      if(search){
-        itemHTML = '<div id="search' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item online"><div class="col-xs-3">';
-      }else{
-        itemHTML = '<div id="' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item online"><div class="col-xs-3">';
-      }
-      itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
-      itemHTML += '<h3>' + data.stream.channel.display_name + '</h3>';
-      if(search){
-        if(inArray(name, channelList)){
-          itemHTML += '<h6><span>ONLINE</span> - <b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>';
-        }else{
-          itemHTML += '<h6><span>ONLINE</span> - <b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Add channel to your list" class="add-item glyphicon glyphicon-plus"></span></div></div>';
-        }
-        $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
-      }else{
-        itemHTML += '<h6><b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Remove channel from your list" class="remove-item glyphicon glyphicon-remove"></span></div></div>';
-        $($(itemHTML).fadeIn(400)).appendTo("#onlineItems");
-      }
-      d(data);
-    }else{
-      status = "offline";
-      if(search){
-        itemHTML = '<div id="search' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item offline"><div class="col-xs-3">';
-      }else{
-        itemHTML = '<div id="' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item offline"><div class="col-xs-3">';
-      }
-      itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
-      itemHTML += '<h3>' + name + '</h3>';
-
-      if(search){
-        itemHTML += (inArray(name, channelList)) ? '<h6></h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>' : '<h6></h6><span title="Add channel to your list" class="add-item glyphicon glyphicon-plus"></span></div></div>';
-        $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
-      }else{
-        itemHTML += '<h6></h6><span title="Remove channel from your list" class="remove-item glyphicon glyphicon-remove"></span></div></div>';
-        $($(itemHTML).fadeIn(400)).appendTo("#offlineItems");
-      }
-
-      var id;
-      if(search){
-        id = "#search" + name.toLowerCase();
-        getLogoOffline(name, id, true);
-      }else{
-        id = "#" + name.toLowerCase();
-        getLogoOffline(name, id, false);
-      }
+function getJSON(url, callback){
+  $.ajax({
+    url: url,
+    headers: {
+      "Client-ID": "1wrihd2jupj4ymmf8rxuh0lmiqwks39"
+    },
+    succes: function(data){
+      callback(data);
     }
-
-    // Remove button event handler
-    $(".remove-item").unbind().on('click', function(){
-      if($(this).parent().find("h3").html() == "FreeCodeCamp"){
-        window.alert("FreeCodeCamp cannot be removed.");
-        return false;
-      }
-      removeItemFromList($(this).parent().find("h3").html());
-      var height = $(this).parent().parent().innerHeight() + "px";
-      $(this).parent().parent().fadeOut(400, function(){
-        $(this).prev().css("margin-bottom", height);
-        $(this).prev().animate({
-          "margin-bottom": "2px"
-        }, 300);
-        $(this).remove();
-      });
-    });
-
-    //Remove button search event handler
-    $(".remove-item-search").unbind().on('click', function(){
-      if($(this).parent().find("h3").html() == "FreeCodeCamp"){
-        window.alert("FreeCodeCamp cannot be removed.");
-        return false;
-      }
-      $(this).removeClass("glyphicon-remove remove-item");
-      $(this).addClass("glyphicon-plus add-item");
-      var name = $(this).parent().find("h3").html().toLowerCase();
-      var id = "#" + name;
-      $(id).remove();
-      removeItemFromList(name);
-    });
-
-    // Add button event handler
-    $(".add-item").on('click', function(){
-      var name = $(this).parent().find("h3").html();
-      addItemtoList($(this).parent().find("h3").html());
-      $(this).addClass("glyphicon-remove remove-item");
-      $(this).removeClass("glyphicon-plus add-item");
-    });
-
-    //Link to Twitch site
-    $(".item h3").unbind().on('click', function(){
-      window.open("https://twitch.tv/" + $(this).parent().parent().attr("id"));
-    });
-    $(".item img").unbind().on('click', function(){
-      window.open("https://twitch.tv/" + $(this).parent().parent().attr("id"));
-    });
-
   });
 }
 
+
+
+function makeRequest(name, search){
+
+  $.ajax({
+    url: 'https://api.twitch.tv/kraken/streams/' + name,
+    headers: { "Client-ID" : "gijfg2cs5k5awt331bcl5lqnxhfar9s" }
+  }).done(function(data){
+      var status = "";
+      var imgURL = "http://placehold.it/100x100";
+      var itemHTML = "";
+      objects.push(data);
+
+      if("error" in data){
+        status = "error";
+        //window.alert("Your list contains an account (" + name + ") that is closed or never existed!");
+      }else if(data.stream !== null){
+        status = "online";
+        imgs.push(data.stream.channel.logo);
+        imgURL = data.stream.channel.logo;
+        if(search){
+          itemHTML = '<div id="search' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item online"><div class="col-xs-3">';
+        }else{
+          itemHTML = '<div id="' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item online"><div class="col-xs-3">';
+        }
+        itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
+        itemHTML += '<h3>' + data.stream.channel.display_name + '</h3>';
+        if(search){
+          if(inArray(name, channelList)){
+            itemHTML += '<h6><span>ONLINE</span> - <b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>';
+          }else{
+            itemHTML += '<h6><span>ONLINE</span> - <b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Add channel to your list" class="add-item glyphicon glyphicon-plus"></span></div></div>';
+          }
+          $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
+        }else{
+          itemHTML += '<h6><b>' + data.stream.game + ': </b>' + data.stream.channel.status + '</h6><span title="Remove channel from your list" class="remove-item glyphicon glyphicon-remove"></span></div></div>';
+          $($(itemHTML).fadeIn(400)).appendTo("#onlineItems");
+        }
+        //d(data);
+      }else{
+        status = "offline";
+        if(search){
+          itemHTML = '<div id="search' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item offline"><div class="col-xs-3">';
+        }else{
+          itemHTML = '<div id="' + name.toLowerCase() + '" class="col-xs-12 col-sm-10 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3 col-sm-offset-1 item offline"><div class="col-xs-3">';
+        }
+        itemHTML += '<img class="img-responsive" src="' + imgURL + '"  /></div><div class="col-xs-9">';
+        itemHTML += '<h3>' + name + '</h3>';
+
+        if(search){
+          itemHTML += (inArray(name, channelList)) ? '<h6></h6><span title="Remove channel from your list" class="remove-item-search glyphicon glyphicon-remove"></span></div></div>' : '<h6></h6><span title="Add channel to your list" class="add-item glyphicon glyphicon-plus"></span></div></div>';
+          $($(itemHTML).fadeIn(400)).appendTo("#searchItems");
+        }else{
+          itemHTML += '<h6></h6><span title="Remove channel from your list" class="remove-item glyphicon glyphicon-remove"></span></div></div>';
+          $($(itemHTML).fadeIn(400)).appendTo("#offlineItems");
+        }
+
+        var id;
+        if(search){
+          id = "#search" + name.toLowerCase();
+          getLogoOffline(name, id, true);
+        }else{
+          id = "#" + name.toLowerCase();
+          getLogoOffline(name, id, false);
+        }
+      }
+
+      // Remove button event handler
+      $(".remove-item").unbind().on('click', function(){
+        if($(this).parent().find("h3").html() == "FreeCodeCamp"){
+          window.alert("FreeCodeCamp cannot be removed.");
+          return false;
+        }
+        removeItemFromList($(this).parent().find("h3").html());
+        var height = $(this).parent().parent().innerHeight() + "px";
+        $(this).parent().parent().fadeOut(400, function(){
+          $(this).prev().css("margin-bottom", height);
+          $(this).prev().animate({
+            "margin-bottom": "2px"
+          }, 300);
+          $(this).remove();
+        });
+      });
+
+      //Remove button search event handler
+      $(".remove-item-search").unbind().on('click', function(){
+        if($(this).parent().find("h3").html() == "FreeCodeCamp"){
+          window.alert("FreeCodeCamp cannot be removed.");
+          return false;
+        }
+        $(this).removeClass("glyphicon-remove remove-item");
+        $(this).addClass("glyphicon-plus add-item");
+        var name = $(this).parent().find("h3").html().toLowerCase();
+        var id = "#" + name;
+        $(id).remove();
+        removeItemFromList(name);
+      });
+
+      // Add button event handler
+      $(".add-item").on('click', function(){
+        var name = $(this).parent().find("h3").html();
+        addItemtoList($(this).parent().find("h3").html());
+        $(this).addClass("glyphicon-remove remove-item");
+        $(this).removeClass("glyphicon-plus add-item");
+      });
+
+      //Link to Twitch site
+      $(".item h3").unbind().on('click', function(){
+        window.open("https://twitch.tv/" + $(this).parent().parent().attr("id"));
+      });
+      $(".item img").unbind().on('click', function(){
+        window.open("https://twitch.tv/" + $(this).parent().parent().attr("id"));
+      });
+
+    });
+}
+
 function getLogoOffline(channel, id, search){
-  $.getJSON('https://api.twitch.tv/kraken/channels/' + channel, function(data){
+  $.ajax({
+    url: 'https://api.twitch.tv/kraken/channels/' + channel,
+    headers: { "Client-ID" : "gijfg2cs5k5awt331bcl5lqnxhfar9s" }
+  }).done(function(data){
     var $id = $(id);
     $id.find(".img-responsive").attr('src', data.logo);
     var status = (data.status === null) ? "No status set" : data.status;
@@ -298,7 +318,11 @@ $("#iconBar input[type='search']").on('input', function(){
     $.xhrPool.abortAll();
   });
 
-  $.getJSON('https://api.twitch.tv/kraken/search/channels?q=' + encodeURIComponent(searchVal) + '&limit=5&callback=?', function(data){
+  $.ajax({
+    url: 'https://api.twitch.tv/kraken/search/channels?q=' + encodeURIComponent(searchVal) + '&limit=5', 
+    headers: { "Client-ID" : "gijfg2cs5k5awt331bcl5lqnxhfar9s" }
+  }).done(function(data){
+    
     $(data.channels).each(function(i, item){
       makeRequest(item.display_name, true);
     });
